@@ -1,0 +1,236 @@
+---
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  fig.topcaption = TRUE,
+  tab.add_dummy_table = TRUE,
+  message = FALSE
+)
+```
+
+# Supported features by **rmdmux** {.chapter}
+
+## Distributed RMD files
+
+For longer reports it can be useful to distribute the
+code among multiple smaller RMD files. In order to include an RMD file
+(child file) in another RMD file, one must include an empty chunk
+with setting the child files name in the chunk option `child="FILENAME_CHILD.Rmd"`.
+
+## Footnotes
+
+For `html_rmdmux_paged` we can have paginated
+footnotes^[For a description on footnotes see [pagedown/#footnotes](https://pagedown.rbind.io/#footnotes).]. This is
+achieved by setting `pandoc_args: ["-M", "paged-footnotes: true"]` in
+the YAML-Header.
+For `html_rmdmux_plain` we cannot use paginated footnotes.
+Because of this, we have cannot just use the general option 
+`paged-footnotes: true`, since this is option is not valid for `html_rmdmux_plain`.
+
+## Referincing tables, figures, sections
+
+In section \@ref(sec-install) we saw, how **rmdmux** could be installed.
+We will now create the accessible tables \@ref(tab:usa-arrests), 
+\@ref(tab:usa-arrests-customized) and the figure \@ref(fig:phones) with
+a conditional table (`html_rmdmux_plain` only).
+
+## Creating accessible tables
+
+The **[styledTables](https://github.com/R-package/styledtable)** package allows
+the creation of accessible **HTML tables**. When creating the
+**plain HTML** using the `html_rmdmux_plain` output format, the resulting
+HTML tables will fulfill the 
+[WAI requirements](https://www.w3.org/WAI) and therefore contain
+all required features in order to be
+fully accessible by screen reading devices, which are often used by visually impaired
+persons.
+Therefore, even very complex tables can be made accessible.
+Supported features:
+
+- **complex column headers** with multiple header levels and merged cells
+- **complex row headers** with multiple header levels and merged cells
+- **multiple subheadings** partitioning the table into sub tables
+
+### Include styledTables in the **list of tables**
+
+Unfortunately, **pagedown** currently only supports **Markdown** tables.
+This means that an **HTML table** will not be included in the generated
+**list of tables** (see the following [pagedown issue](https://github.com/rstudio/pagedown/issues/191)).
+As a workaround, we can set the chunk option `tab.add_dummy_table = TRUE`
+at the beginning of the **main RMD** file.
+This causes the **styledTables** package to automatically add
+**dummy tables** before each printed **styledtable**.
+These dummy tables are only needed for the creation of the **list of tables** and
+will automatically be stripped by an included pandoc-filter after this step.
+
+### Create a simple styledTable {.newpage}
+
+The following code prints a simple **styledTable**.
+The **table caption** and the **table footer** are defined in the
+chunk options. The **table reference** is defined by the **chunk name**
+(do not use underscores or white spaces in chunk names and be sure that
+all chunk names in the entire report are unique).
+The table can be refernced as follows `\\@ref(tab:usa-arrests)` resulting in
+the link \@ref(tab:usa-arrests) referencing the printed table.
+These references also work for distributed **Rmd** files.
+
+A table usually consists of the following elements:
+ 
+- A **table caption**, which holds a table reference and describes the contents of
+  the table. The table caption is defined by the chunk option `tab.cap`.
+- An optional **table footer**, which consists of one or several text blocks
+  containing additional information about the table. The table footer can be
+  defined by the chunk option `tab.footer`.
+- **Column header rows**: These rows are usually at the top of the table and
+  they hold the headings of the data columns. The function
+  `set_html_colheader()` can be used in order to tell the styledTables package
+  which rows are holding the column headings.
+- **Row header columns**: These columns are usually at the left side of the table
+  and they hold the headings of the data rows. The function
+  `set_html_rowheader()` can be used in order to tell the styledTables package
+  which rows are holding the column headings.
+- **Sub headings**: These rows are usually single merged rows, which split
+  the data table into multiple small sub tables and each sub table
+  contains only the data valid for the context given by the corresponding
+  sub heading. The function `set_html_subheading()` can be used in order to tell
+  the styledTables package which rows are sub heading rows.
+
+```{r usa-arrests, tab.cap = 'Example-1 - A simple table', tab.footer = c('This is the table footer.', 'The footer may contain multiple rows.')}
+# create styledTable object
+st_usarrests <- df_usarrests %>%
+  styled_table(keep_header = TRUE) %>%
+  set_html_colheader(row_id = 1) %>%
+  set_html_rowheader(col_id = 1)
+
+# apply default theme the the styledTable
+st_usarrests %>%
+  apply_html_theme1() %>%
+  xlsx_add_st
+```
+
+The function `apply_html_theme1()` applies the table styling defined in the
+stylesheet in [styledTables/inst/sass_files/styledtable_theme1.sass](https://github.com/R-package/styledtable/trees/master/inst/sass_files/styledtable_theme1.sass).
+
+### Apply your own table theme
+
+In order to use your own table styling, you may want to have a look at the
+default stylesheet
+[styledTables/inst/sass_files/styledtable_theme1.sass](https://github.com/R-package/styledtable/trees/master/inst/sass_files/styledtable_theme1.sass)
+and create your own theme from it.
+
+In the following example we
+
+- create a stylesheet `ex1_mytable.sass` defining the css styling for
+  tables of HTML class `mytable`
+- transpile the stylesheet to `ex1_mytable.min.css`
+- add the created **css** file to the **html dependencies** of the styled table object.
+- add the **HTML class** `ex1-mytable` to the styled table object.
+
+```{r usa-arrests-customized, tab.cap = 'Example-2 - A table with custom theme'}
+# transpile to css
+sass::sass(
+  sass::sass_file("./ex1_mytable.sass"),
+  output = "ex1_mytable.min.css",
+  options = sass::sass_options(output_style = "compressed"),
+  cache = FALSE
+) %>% invisible 
+
+# add html dependency
+st_usarrests_custom <- st_usarrests %>%
+  add_html_stylesheet("ex1_mytable.min.css")
+
+# add the html class "my-styledtable" and print the table
+st_usarrests_custom %>%
+  set_html_table_class("ex1-mytable") %>%
+  xlsx_add_st
+```
+
+### Create a complex styledTable {.newpage}
+
+```{r hair-eye-color, tab.cap = 'Example-3 - A more complex table', warnings = FALSE}
+st_haireye_body <- df_haireye %>%
+  styled_table
+
+# Create the styled table header
+st_haireye_header <- c( 
+  "Hair", rep(c("Male", "Female"), each = 4),
+  "", rep(c("Brown", "Blue", "Hazel", "Green"), times = 2)
+) %>%
+  styled_table(nrow = 2) %>%
+  merge_cells(col_id = 1, row_id = 1:2) %>%
+  merge_cells(col_id = 2:5, row_id = 1) %>%
+  merge_cells(col_id = 6:9, row_id = 1)
+
+# concatenate the styled table header and body,
+# define col-/row-headers,
+# apply `theme1` from `styledTables` package and then print the table
+styled_table(
+  st_haireye_header,
+  st_haireye_body
+) %>%
+  set_html_colheader(row_id = 1:2) %>%
+  set_html_rowheader(col_id = 1) %>%
+  apply_html_theme1() %>%
+  xlsx_add_st
+```
+
+### Conditional tables for plots {.newpage}
+
+Plots are a great way to visualize data, but are not accessible to visually
+impaired people.
+Therefore, it is necessary to include a text or
+an accessible table describing the displayed data.
+With **styledTables** it is possible to append tables to figures only
+for the **plain HTML output**.
+This can be achieved by using the chunk option `tab.print = rmdmux::rmdmux_is_plain()`,
+which suppresses the printing of the additional styled table, if the
+current output format is not `html_rmdmux_plain`.
+
+```{r, eval = FALSE, fig.height = 2, fig.cap="Number of telephones in various regions of the world (in thousands)", tab.print = rmdmux::rmdmux_is_plain()}
+df_phones %>%
+  pivot_longer(cols = 2:8, names_to = "region", values_to = "phones") %>%
+  {
+    ggplot(.) +
+      geom_line(aes(x = year, y = phones, color = region))
+  }
+
+styled_table(df_phones, keep_header = TRUE) %>%
+  styled_table %>%
+  set_html_colheader(row_id = 1) %>%
+  set_html_rowheader(col_id = 1) %>%
+  apply_html_theme1()
+```
+
+
+
+```{r phones, echo = FALSE, fig.height = 2, fig.cap="Number of telephones in various regions of the world (in thousands)", tab.print = rmdmux::rmdmux_is_plain(), fig.footer = "In the `plain` export this plot is extended by an additional table holding the data. Note that, the chunk argument `fig.footer` is introduced in `rmdmux` for adding additional footer texts to figures."}
+df_phones %>%
+  pivot_longer(cols = 2:8, names_to = "region", values_to = "phones") %>%
+  {
+    ggplot(.) +
+      geom_line(aes(x = year, y = phones, color = region))
+  }
+
+styled_table(df_phones, keep_header = TRUE) %>%
+  styled_table %>%
+  set_html_colheader(row_id = 1) %>%
+  set_html_rowheader(col_id = 1) %>%
+  apply_html_theme1()
+```
+
+### Store the tables in an Excel file
+
+The package [xlsxcollection](www.github.com/a-maldet/xlsxcollection) allows you to addionally store the created
+**styledTable** objects in an Excel file.
+In this example we used the function `xlsx_add_st`, which saves the
+table as an RDS file (this is a side effect) to the folder `xlsx_tables` and 
+then simply returns the styledTable object, which causes **knitr** to print
+the table.
+
+Note: If you removed the call `%>% xlsx_add_st()` then the table would be
+rendered as usual, but not stored in the folder `xlsx_tables`.
+Hence, if you do not want to use the Excel export at all, you can
+simply delete the chunk `excel-export` in `ex1_main.Rmd` and all calls
+`%>% xlsx_add_st()` in the following chunks.
+

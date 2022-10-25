@@ -1,0 +1,161 @@
+---
+output: github_document
+---
+
+# rmdmux <img src="inst/hexsticker/rmdmux_hexsticker.png" align="right" alt="" width=140 height=162 />
+
+<!-- badges: start -->
+[![GitHub last commit](https://img.shields.io/github/last-commit/a-maldet/rmdmux.svg?logo=github)](https://github.com/a-maldet/rmdmux/commits/master)
+[![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/a-maldet/rmdmux.svg?logo=github)](https://github.com/a-maldet/rmdmux)
+
+
+The **rmdmux** package is an **R** package, which extends [rmarkdown](https://github.com/rstudio/rmarkdown).
+It offers two additional output formats:
+
+- `html_rmdmux_paged`: A beautiful **PDF** report
+- `html_rmdmux_plain`: A plain **HTML** file, which fulfills the [WAI requirements](https://www.w3.org/WAI)
+  and is therefore fully accessible by assistive reading devices like screen readers
+  
+With **rmdmux** you can create **a single RMD file** (see [rmarkdown](https://github.com/rstudio/rmarkdown)) and export it as PDF and
+as accessible HTML file.
+
+> Documents should be beautiful and accessible! 
+
+The **rmdmux** package is a minor extension/variation of the wonderful
+**[pagedown](https://pagedown.rbind.io/)** package and therefore
+uses the **[pagedjs](https://pagedjs.org)** Javascript library in order to
+create paginated HTML files.
+
+## Install
+
+Please install the following R packages from **github**:
+
+- [funky](https://github.com/a-maldet/funky)
+- [composerr](https://github.com/a-maldet/composerr)
+- [styledTables](https://github.com/R-package/styledtable) (v0.2.0 - deprecated, will hopefully be replaced by **styledtable** till May 2023)
+- [xlsxcollection](https://github.com/a-maldet/xlsxcollection) (Optional: Used for Excel export)
+- [rmdmux](https://github.com/a-maldet/rmdmux)
+
+```{r eval = FALSE, echo = TRUE}
+devtools::install_github('a-maldet/funky', build_opts = NULL)
+devtools::install_github('a-maldet/composerr', build_opts = NULL)
+devtools::install_github('R-package/styledTables', ref = "v0.2.0", build_opts = NULL)
+devtools::install_github('a-maldet/rmdmux', build_opts = NULL)
+
+# Optional (needed for Excel export)
+devtools::install_github('a-maldet/xlsxcollection', build_opts = NULL)
+```
+
+## Getting started
+
+In order to understand the usage of **rmdmux** we recommend you to look at
+the build-in example `ex1`.
+The following code copies the entire example code into our current working directory
+
+```{r eval = FALSE, echo = TRUE}
+# copy `ex1/` to current working directory
+rmdmux::create_example_1(".")
+```
+
+You can now render the report by calling 
+
+```{r eval = FALSE, echo = TRUE}
+rmdmux::inf_mr("ex1_main.Rmd", output_format = "rmdmux::html_rmdmux_paged")
+```
+
+If you open the url `127.0.0.1:4321/ex1_main.html` in **Google Chrome**
+you should be able to see the paginated version of the `ex1` report.
+There you will find a more detailed manual for **rmdmux**.
+
+### Rendering the report
+
+There are several ways to render the report:
+
+- `rmdmux::print_chrome("ex1_main.Rmd", output_format = "rmdmux::html_rmdmux_paged")`:
+  This call prints the paginated report to a PDF file.
+- `rmarkdown::render("ex1_main.Rmd", output_format = "rmdmux::html_rmdmux_plain")`: 
+  This call renders the report as a plain HTML file which fulfills the
+  [WAI requirements](https://www.w3.org/WAI) and is accessible by
+  screen readers.
+- `rmdmux::inf_mr("ex1_main.Rmd", output_format = "rmdmux::html_rmdmux_paged")`:
+  This call is very useful, when you are working on report, since it
+  will start a local **http** server, serving the rendered document as an
+  HTML document. You can look at the report by opening the url 
+  `127.0.0.1:4321/ex1_main.html` in **Google Chrome**.
+  If you change one of your RMD files the report will automatically be 
+  rerendered and you just need to refresh your browser.
+  In order to quit the **http** server, just call `rmdmux::daemon_stop()`.
+
+### Supported features
+
+- all features of [pagedown](https://pagedown.rbind.io/) except
+  **running headers** and **front-cover** and **back-cover images**:
+    - table of contents
+      (see [bookdown/#table-of-contents](https://bookdown.org/yihui/rmarkdown/html-document.html#table-  of-contents))
+    - list of figures (see [pagedown/#LOT](https://pagedown.rbind.io/#LOT))
+    - list of tables (see [pagedown/#LOT](https://pagedown.rbind.io/#LOT))
+    - customized labels (language support) for report elements
+      (see [pagedown/#internationalization](https://pagedown.rbind.io/#internationalization))
+    - footnotes can be included in the page footer of the corresponding pages
+      (see [pagedown/#footnotes](https://pagedown.rbind.io/#footnotes))
+    - referencing figures, tables, sections etc. with counter and page number
+      (see [pagedown/#page-references](https://pagedown.rbind.io/#page-references))
+      (Cation: The label for the page number references is defined in **css** 
+      and not in **\_bookdown.yaml**)
+    - additional styling for the plain and the paginated report version by using
+      **sass** or **css** files
+      (see [pagedown/#the-css-overriding-mechanism](https://pagedown.rbind.io/#the-css-overridin    g-mechanism))
+    - mathematical formulas in LaTeX
+      (see [pagedown/#mathjax](https://pagedown.rbind.io/#mathjax))
+    - automated creation of bibliography
+      (see [pagedown/#bibliography](https://pagedown.rbind.io/#bibliography))
+    - automated creation of a list of abbreviations
+      (see [pagedown/#list-of-abbreviations](https://pagedown.rbind.io/#list-of-abbreviations))
+    - and many more (see [pagedown](https://pagedown.rbind.io/))
+- title page with
+    - logo: optional small image in the upper right corner of the title page
+    - image: optional big image in the center of the title page
+    - footer: optional title page footer with left, center and right page footer
+      area
+- imprint page with:
+    - report title field
+    - edition field: Optional field holding the print edition
+    - date field: Publishing date
+    - place field: Optional field holding the place of pulication
+    - publisher field: Optional field holding the name publisher name
+    - author field: Field listing all authors
+    - editor: Optional field listing all editors
+    - address: Optional field holding the publisher address
+    - phone number field: Optional field with phone number
+    - email field: Optional field with email address
+    - url field: Optional field with a publisher or report url
+    - qr-code: Optional qr-code image
+    - credits field: Optional credits for images etc.
+    - remarks area: Optional remarks at the end of the imprint page
+- fully accessible tables by using
+  [styledTables](https://github.com/R-package/styledtable):
+    - beautiful tables, which fulfill the
+      [WAI requirements](https://www.w3.org/WAI) and are accessible by
+      screen readers.
+    - tables can optionally be included in the list of tables and be referenced by
+      `\@ref(tab:CHUNKNAME)`
+    - tables can have a table caption and table footer
+    - tables can contain multiple header rows and multiple row header columns
+    - tables can contain subheader rows splitting the table into muliple areas
+    - tables can be suppressed/included depending on the rendered output format
+    - the appearance of the tables can be modified by supplying custom
+      **sass** or **css** files
+- splitting up the RMD file into multiple files
+- footer texts for figures
+
+### Not supported features
+
+The following features are supported by [pagedown](https://pagedown.rbind.io/),
+but not by **rmdmux**:
+
+- **front-cover** and **back-cover**
+  (see [pagedown/#covers](https://pagedown.rbind.io/#covers)): This feature
+  will most likely not be included anytime soon.
+- **running headers**
+  (see [pagedown/#custom-running-headers](https://pagedown.rbind.io/#custom-running-headers)):
+  This feature will be included as soon as possible.

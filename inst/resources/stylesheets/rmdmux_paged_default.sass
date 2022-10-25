@@ -1,0 +1,383 @@
+/* This template is based on
+/* https://github.com/rstudio/pagedown/blob/main/inst/resources/css/default-page.css
+
+/*@import 'https://fonts.googleapis.com/css?family=Old+Standard+TT'
+
+body 
+  font-family: 'Old Standard TT', Palatino, "Palatino Linotype", "Palatino LT STD", Georgia, serif
+
+blockquote 
+  font-family: 'Old Standard TT', Palatino, "Palatino Linotype", "Palatino LT STD", Georgia, serif
+
+code 
+  font-family: Consolas, Courier, "Courier New", monospace
+
+pre, code 
+  font-size: .95em
+
+
+/* variables assignment
+\:root 
+  --background: whitesmoke
+  --pagedjs-width: 6in
+  --pagedjs-height: 9in
+  --color-paper: white
+  --color-mbox: rgba(0, 0, 0, 0.2)
+  --running-title-width: 2.5in
+  --screen-pages-spacing: 5mm
+
+
+
+/* named pages (see https://pagedjs.org/documentation/5-web-design-for-print/)
+.front-matter-container
+  page: frontmatter
+.main .level1
+  page: chapter
+
+
+
+/* page size (see https://pagedjs.org/documentation/5-web-design-for-print/)
+@page
+  size: A4
+  margin: 2cm 2cm 2cm 2cm
+@page :first
+  margin: 3.5cm 1.5cm 2cm 1.5cm
+
+
+
+/* page content height
+/* extend page content to page height
+.pagedjs_page_content > div 
+  height: 100%
+
+
+/* set page counters
+@page :first
+  @bottom-left
+    content: none
+  @bottom-right
+    content: none
+@page frontmatter:left
+  @bottom-left
+    content: counter(page, lower-roman)
+@page frontmatter:right
+  @bottom-right
+    content: counter(page, lower-roman)
+@page :left
+  @bottom-left
+    content: counter(page)
+@page :right 
+  @bottom-right
+    content: counter(page)
+
+/* suppess page counter for the (optional) blank page between front matter and 1st chapter
+.pagedjs_page:not(.pagedjs_named_page):not(.pagedjs_first_page) .pagedjs_margin-bottom-left .pagedjs_margin-content::after
+  content: none!important
+
+/* reset page numbering when first chapter starts
+.main .level1:first-child h1
+  counter-reset: page 1
+
+
+
+/* page breaks; aka CSS fragmentation (see https://pagedjs.org/documentation/5-web-design-for-print/)
+.level1
+  break-before: always
+
+.newpage
+  break-before: always
+
+h1, h2, h3, h4, h5, h6
+  break-after: avoid
+
+.footenotes
+  break-before: always
+  break-after: always
+
+.figure
+  break-inside: avoid
+
+
+
+/* style title page
+@page :first
+  margin: 3.5cm 1.5cm 2cm 1.5cm
+  @top-right
+    content: element(titlePageLogo)
+.title-page
+  display: table
+  table-layout: fixed
+  height: 100%
+  width: 100%
+  h2
+    font-weight: normal
+  > div
+    display: table-row
+    width: 100%
+  > div:first-child
+    height: 100%
+    > div
+      display: table-cell
+      text-align: center
+      vertical-align: middle
+      width: 100%
+  > div#title-page-footer
+    vertical-align: top
+    > div
+      display: table
+      table-layout: fixed
+      width: 100%
+      > div
+        display: table-cell
+        max-width: 100%
+      div#title-page-footer-left
+        text-align: left
+      div#title-page-footer-middle
+        text-align: center
+      div#title-page-footer-right
+        text-align: right
+
+/* title page cover image    
+#title-page-image
+  display: block
+  max-width: 100%
+  max-height: 10cm
+  margin: 4em auto 0 auto
+  
+
+/* title page logo
+.title-page-logo-container
+  position: running(titlePageLogo)
+  img
+    width: 3cm
+/* fine tune position in the upper right margin-cell of the title page
+.pagedjs_first_page .pagedjs_margin-top-right .pagedjs_margin-content
+  display: table!important
+  height: 100%
+  > div
+    display: table-cell!important
+    vertical-align: bottom
+    height: 100%
+    img
+      display: block
+      margin-left: auto
+
+
+
+/* imprint (2nd page)
+#imprint
+  address
+    font-style: normal
+#imprint-table
+  display: table
+  margin-left: 0px
+  width: 100%
+  > div
+    display: table-row
+    > div
+      display: table-cell
+      text-align: left
+      padding-top: 0.8em
+    > div:first-child
+      width: 30%
+      &::after
+        content: ":"
+/* position optional QR-Code for url field in imprint
+#imprint-url-qrcode
+  width: 2cm
+  height: 2cm
+  vertical-align: top
+  margin-left: 2cm
+#imprint-remarks-container
+  margin-top: 3em
+  > p
+    margin-block-start: 1em
+    margin-block-end: 0em
+
+
+
+/* fonts
+body
+  font-family: "Open Sans", Arial, Helvetica, sans-serif
+  font-size: 10pt
+
+blockquote
+  font-family: "Open Sans", Arial, Helvetica, sans-serif
+
+code
+  font-family: "Roboto Mono", Monaco, 'Courier New', monospace
+
+pre, code
+  font-family: "Roboto Mono", Monaco, 'Courier New', monospace
+
+
+
+/* hyphenate
+body 
+  hyphens: auto
+
+code 
+  hyphens: none
+  
+  
+.chapter > h1 > .header-section-number::before, .chapter-ref > .toc-section-number::before 
+  content: var(--chapter-name-before, "")
+
+.chapter > h1 > .header-section-number::after, .chapter-ref > .toc-section-number::after 
+  content: var(--chapter-name-after, "")
+
+/*.chapter-ref 
+/*  font-weight: bold
+/*  line-height: 115%
+
+/*a.chapter-ref 
+/*  padding: 0
+/*  line-height: 110%
+
+.sourceCode 
+  line-height: 1
+  
+img 
+  max-width: 100%
+
+pre 
+  padding: 1em
+
+pre[class] 
+  background: #f9f9f9
+
+
+
+
+/* generated content */
+a[href^="http"]:not([class="uri"])::after
+  font-size: 90%
+  hyphens: none
+  word-break: break-all
+
+.references a[href^=http]:not([class=uri])::after 
+  content: none
+
+.main .sourceCode a[href^="#"]:not([class^="footnote-"]):not([href*=":"])::after 
+  content: none
+
+.main a[href^="#"]:not([class^="footnote-"]):not([href*=":"])::after 
+  content: " (page " target-counter(attr(href), page) ")"
+
+.main a.front-matter-ref[href^="#"]:not([class^="footnote-"]):not([href*=":"])::after 
+  content: " (page " target-counter(attr(href), page, lower-roman) ")"
+
+#refs div 
+  margin-left: 2em
+  text-indent: -2em
+  text-align: justify
+
+
+
+/* TOC, LOT, LOF */
+.toc ul, .lot ul, .lof ul 
+  list-style: none
+  padding-left: 0
+  overflow-x: hidden
+
+.toc
+  > ul
+    > li
+      padding-top: 1em
+    > li:first-child
+      padding-top: 0em
+    > li li
+      padding-left: 2em
+
+.toc li:before, .lot li:before, .lof li:before
+  content: none 
+
+.toc a, .lot a, .lof a 
+  text-decoration: none
+  background: white
+  padding-right: .33em
+
+.toc a::after, .lot a::after, .lof a::after 
+  /* content: leader(dotted) target-counter(attr(href), page); */
+  content: target-counter(attr(href), page)
+  float: right
+  background: white
+
+.toc a.front-matter-ref::after, .lot a.front-matter-ref::after, .lof a.front-matter-ref::after 
+  /* content: leader(dotted) target-counter(attr(href), page, lower-roman); */
+  content: target-counter(attr(href), page, lower-roman)
+
+.toc .leaders::before, .lot .leaders::before, .lof .leaders::before 
+  float: left
+  width: 0
+  white-space: nowrap
+  content: ". . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . "
+
+/* class chapter and chapter-ref
+.toc .chapter-ref
+  font-weight: bold
+  .leaders::before 
+    float: left
+    width: 0
+    white-space: nowrap
+    content: "                                                                                                                                                                                "
+
+
+
+/* knitr::kables styling, see https://github.com/rstudio/pagedown/issues/214 */
+.kable_wrapper > tbody > tr > td 
+    vertical-align: top
+
+
+
+/* footnotes
+.footnotes 
+  font-size: 90%
+
+.footnotes hr::before 
+  content: "Footnotes:"
+
+.footnotes hr 
+  border: none
+
+.footnote-break 
+  width: 1in
+
+
+
+/* two pages in a row if possible on screen */
+@media screen 
+  body 
+    background-color: var(--background)
+    margin: var(--screen-pages-spacing) auto 0 auto
+  
+  .pagedjs_pages 
+    display: flex
+    max-width: calc(var(--pagedjs-width) * 2)
+    flex: 0
+    flex-wrap: wrap
+    margin: 0 auto
+  
+  .pagedjs_page 
+    background: var(--color-paper)
+    box-shadow: 0 0 0 1px var(--color-mbox)
+    flex-shrink: 0
+    flex-grow: 0
+    margin: auto auto var(--screen-pages-spacing) auto
+
+
+
+/* when a row can hold two pages, start first page on the right */
+@media screen and (min-width: 12.32in) 
+  .pagedjs_page 
+    margin: auto 0 var(--screen-pages-spacing) 0
+  
+  .pagedjs_first_page 
+    margin-left: var(--pagedjs-width)
+  
+  
+  
+/* use a fixed width body for mobiles */
+@media screen and (max-width: 1180px)  
+  body 
+    width: calc(var(--pagedjs-width) + 2 * var(--screen-pages-spacing))

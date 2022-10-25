@@ -1,0 +1,141 @@
+---
+title: "The rmdmux package"
+subtitle: Write accessible reports in **R**
+author:
+  - name: Adrian Maldet
+    affiliation: Leopold-Franzens-Universität Innsbruck
+date: October 2022
+lang: en # language for <html lang="..."> tag
+output: 
+  rmdmux::html_rmdmux_paged:
+    pandoc_args: ["-M", "paged-footnotes=true"] # put footnotes on page footer of the specific page
+    css:
+      - rmdmux_paged_default
+      - ex1_paged.sass
+  rmdmux::html_rmdmux_plain:
+    css:
+      - rmdmux_plain_default
+      - ex1_plain.sass
+lot: true # insert a list of tables
+lof: true # insert a list of figures
+toc-title: My Table Of Contents  # heading for table of contents
+lot-title: My List Of Tables  # heading for list of tables
+lof-title: My List Of Figures  # heading for list of figures
+title-page:
+  image:
+    src: ex1_cover.png  # path to cover image: included below report title
+    alt: cover logo showing a beautiful hex-sticker  # alternative text for cover image
+  logo:
+    src: ex1_logo.png   # path to cover logo: included in the page corner of the title page
+    alt: cover logo showing an R in a circle   # alternative text for cover logo
+  footer:
+    left: A **pagedown** template<br>by Adrian Maldet 
+    middle: Accessible reports<br>with **R**
+    right: October 2022
+imprint:
+  heading: Imprint    # heading of imprint
+  title-label: Title    # label for title field
+  edition-label: Edition    # label for edition field
+  edition: 1st Edition    # edition
+  publisher-label: Publisher    # label for publisher field
+  publisher:
+    - Adrian Maldet        #  publisher name (vector)
+    - My department
+  address-label: Address    # label for address field
+  address:
+    - Anichstreet 1    # address lines (vector)
+    - 6020 Innsbruck
+    - Austria
+  author-label: Author    # label for author field
+  editor-label: Editor    # label for editor field
+  editor:
+    - name: Pippi Langstrumpf
+      affiliation: Villa Kunterbunt
+    - name: Pumukl
+      affiliation: Kobold institute 
+  email-label: Email
+  email: my.email@fancy.at
+  phone-label: Phone
+  phone: +99-999-9999
+  url-label: Website
+  url: https://github.com/a-maldet/rmdmux
+  url-qrcode:
+    src: ex1_qrcode.png
+    alt: qr-code for the url https://github.com/a-maldet/rmdmux
+  date-label: Date
+  place-label: Place
+  place: Innsbruck
+  copyright-label: Credits
+  copyright:
+    - 'Hexsticker on cover page is &copy; <a href = "https://github.com/a-maldet/rmdmux/tree/master/inst/hexsticker/rmdmux_hexsticker.png">2022 Adrian Maldet</a>'
+    - 'R Logo on cover page is &copy; <a href = "https://www.r-project.org/logo/">2016 The R Foundation</a>'
+  remark:
+    - >-
+      The **rmdmux** package uses the
+      [pagedown](https://github.com/rstudio/pagedown) R-Package by Yihui Xie et. al.
+      Most of the code was taken from there and simply modified.
+params:
+  xlsx_dir: null  # This is an optional name of a directory, where the tables should be stored for Excel export
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  fig.topcaption = TRUE,
+  tab.add_dummy_table = TRUE,
+  message = FALSE
+)
+```
+
+```{r, include=FALSE}
+# load your packages
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(rmdmux)
+library(styledTables)
+
+# load your data
+df_usarrests <- USArrests %>%
+  mutate(State = row.names(.)) %>%
+  select(State, UrbanPop, Murder, Assault, Rape) %>%
+  head
+
+df_haireye <- data.frame(HairEyeColor) %>%
+  pivot_wider(names_from = c("Sex", "Eye"), values_from = "Freq")
+
+df_phones <- data.frame(WorldPhones) %>%
+  (tibble::rownames_to_column)("year") %>%
+  mutate(year = as.numeric(year))
+
+# This variable allows you to render only a subset of your child-RMDs
+# (Useful for developing on your report)
+render_child <- NULL
+# render_child <- 1
+# render_child <- 2
+```
+
+```{r excel-export, include=FALSE}
+#' Optionally export your tables to a single Excel file
+#' - This works best when rendering `html_rmdmux_plain` because in this case,
+#'   The table counters can be read from the `LOT` in `ex1_plain.html` and
+#'   used for the creation of the Excel sheets.
+#' - The Excel creation must be done in a separate step AFTER the rendering
+#'   of `ex1_plain.html` (see `ex1_run.R` ### Create ex1_plain.html WITH ADDITIONAL EXCEL###)
+#' - If you do not want to export to Excel at all, then you can simply remove
+#'   this chunks and all calls of `%>% xlsx_add_st()` in the following chunks.
+#' The returned function `xlsx_add_st` stores each styledTable `st`
+#' in the folder given in `xlsx_dir`
+if (is.character(params$xlsx_dir)) {
+  xlsx_add_st <- xlsxcollection::xlsxcollection_init_store_table_rmdmux(params$xlsx_dir)
+} else {
+  xlsx_add_st <- function(st, ...) {
+    st
+  }
+}
+```
+
+```{r child="ex1_child1.Rmd", eval=is.null(render_child) || 1 %in% render_child}
+```
+ 
+```{r child="ex1_child2.Rmd", eval=is.null(render_child) || 2 %in% render_child}
+```

@@ -1,0 +1,78 @@
+/* fonts
+body, blockquote
+  font-family: 'Open Sans', Arial, sans-serif
+
+code, pre
+  font-family: 'Roboto Mono', Consolas, Courier, "Courier New", monospace
+  
+h1
+  margin-block-start: 1.5em
+  padding-block-start: 1em
+  border-top: solid 1px darkgray
+h1.title
+  border: none
+
+h2
+  margin-block-start: 1em
+
+/* title page cover image    
+#cover-image
+  display: block
+  max-width: 15em
+  max-height: 15em
+  margin: 3em 0
+
+/* imprint (2nd page)
+#imprint
+  dt
+    font-weight: bold
+    padding-top: 0.5em
+    &::after
+      content: ":"
+  address
+    font-style: normal
+
+/* position optional QR-Code for url field in imprint
+#imprint-url-qrcode
+  width: 4em
+  height: 4em
+  vertical-align: top
+  margin-left: 3em
+
+/* tables
+table
+  margin-top: 2em
+  margin-left: 0
+  caption
+    padding-bottom: 0.8em
+    text-align: left
+  
+/* figures
+div.figure
+  margin-top: 2em
+  margin-left: 0
+  p.caption
+    margin-top: 0
+    margin-bottom: 0.8em
+    text-align: left
+    
+
+@media screen and (min-width: 780px)
+  body
+    margin-left: 10%
+    margin-right: 10%
+    margin-top: 100px
+    margin-bottom: 100px
+
+@media screen and (min-width: 500px)
+  body
+    margin-left: 5%
+    margin-right: 5%
+    margin-top: 60px
+    margin-bottom: 60px
+@media screen and (max-width: 500px)
+  body
+    margin-left: 3%
+    margin-right: 3%
+    margin-top: 50px
+    margin-bottom: 50px

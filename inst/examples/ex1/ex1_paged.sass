@@ -1,0 +1,83 @@
+/* Label used for page referencing (usually report elements are labelled in `_bookdown.yaml`, but the page label is not a bookdown feature and therefore must be set in CSS)
+$page-label: "Page"
+/* Label as header for the footnote collection (usually report elements are labelled in `_bookdown.yaml`, but the footnotes header is not a bookdown feature and therefore must be set in CSS)
+$footnotes-label: "Footnotes"
+
+body
+  font-size: 10pt
+  line-height: 130%
+
+h1.title
+  text-align: center
+  font-size: 20pt
+  font-weight: bold
+  line-height: normal
+  text-transform: uppercase
+  margin-bottom: 0em
+
+h2.subtitle
+  font-size: 20pt
+  line-height: normal
+  font-weight: normal
+  text-align: center
+  margin-top: 0em
+
+h1 
+  font-size: 20pt
+  font-weight: bold
+  margin-top: 1.3cm
+  margin-bottom: 1cm
+
+h2 
+  font-size: 14pt
+  font-weight: bold
+  margin-top: 1cm
+  margin-bottom: 0.8cm
+
+h3 
+  font-size: 14pt
+  font-weight: bold
+  margin-top: 1cm
+  margin-bottom: 0cm
+  
+
+/* all in black
+ul, li, a 
+  color: #000000
+
+/* figure caption
+.caption 
+  font-size: 10pt
+  padding-left: 0
+
+/* figure footer (this is an rmdmux specific feature)
+p.fig-footer
+  padding-top: 0
+  margin-top: 0
+
+/* table footer (this is an rmdmux specific feature)
+table.styledtable-table
+  padding-bottom: 2em
+  tfoot td
+    padding-top: 0.5em!important
+
+span.citation 
+
+code 
+  font-size: 10pt
+  line-height: 110%
+
+/* referencing of sections
+body .main a[href^="#"]:not([class^="footnote-"]):not([href*=":"])::after 
+  content: " (" + $page-label + " " target-counter(attr(href), page) ")"
+body .main a.front-matter-ref[href^="#"]:not([class^="footnote-"]):not([href*=":"])::after 
+  content: " (" + $page-label + " " target-counter(attr(href), page, lower-roman) ")"
+  
+/* footnotes at the the document
+.footnotes hr::before
+  content: $footnotes-label + ":"!important
+.footnotes hr
+  font-size: 14pt
+  font-weight: bold
+  margin-bottom: 0.8cm
+  

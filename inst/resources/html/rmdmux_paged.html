@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"$if(lang)$ lang="$lang$" xml:lang="$lang$"$endif$ mu>
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta name="viewport" content="width=device-width">
+<meta property="og:title" content="$pagetitle$" />
+$if(url)$<meta property="og:url" content="$url$" />$endif$
+$if(cover-image)$<meta property="og:image" content="$url$$cover-image$" />$endif$
+$if(description)$<meta property="og:description" content="$description$" />$endif$
+
+$for(author-meta)$
+<meta name="author" content="$author-meta$" />
+$endfor$
+
+$if(date-meta)$
+<meta name="date" content="$date-meta$" />
+$endif$
+
+<meta name="description" content="$if(description)$$description$$else$$pagetitle$$endif$">
+
+<script id="pandoc-meta" type="application/json">
+$meta-json$
+</script>
+
+<title>$if(title-prefix)$$title-prefix$ - $endif$$pagetitle$</title>
+
+$if(math)$
+$if(mathjax)$
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function() {
+  // Retrieve previous config object if defined
+  window.PagedConfig = window.PagedConfig || {};
+  let beforePaged = PagedConfig.before;
+  window.PagedConfig.before = async () => {
+    if (beforePaged) await beforePaged();
+    return new Promise((resolve, reject) => {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      var src = `$mathjaxurl$` + "?config=TeX-MML-AM_CHTML";
+      if (location.protocol !== "file:" && /^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+      script.src = src;
+      window.MathJax = {
+        AuthorInit: () => {
+          MathJax.Hub.Register.StartupHook("Begin", () => {
+            MathJax.Hub.Queue(resolve);
+          });
+        }
+      };
+      document.getElementsByTagName("head")[0].appendChild(script);
+    });
+  };
+})();
+</script>
+$endif$
+$endif$
+
+$for(header-includes)$
+$header-includes$
+$endfor$
+
+$if(highlightjs)$
+<link rel="stylesheet"
+      href="$highlightjs$/$if(highlightjs-theme)$$highlightjs-theme$$else$default$endif$.css"
+      $if(html5)$$else$type="text/css" $endif$/>
+<script src="$highlightjs$/highlight.js"></script>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+$endif$
+
+$if(highlighting-css)$
+<style type="text/css">
+$highlighting-css$
+</style>
+$endif$
+
+$for(css)$
+<link rel="stylesheet" href="$css$" $if(html5)$$else$type="text/css" $endif$/>
+$endfor$
+
+</head>
+
+<body>
+
+<div class="running-h1-title"></div>
+
+<div class="running-h2-title"></div>
+
+$if(title-page.logo)$
+<div class="title-page-logo-container">
+    <img id="title-page-logo" src="$if(title-page.logo.src)$$title-page.logo.src$$else$$title-page.logo$$endif$" alt="$if(title-page.logo.alt)$$title-page.logo.alt$$else$cover logo$endif$">
+</div>
+$endif$
+
+$for(include-before)$
+$include-before$
+$endfor$
+
+<div id="$idprefix$header" class="title-page">
+  <div>
+    <div>
+      <h1 class="title">$title$</h1>
+      $if(subtitle)$<h2 class="subtitle"><span>$subtitle$</span></h2>$endif$
+      $if(title-page.image)$
+        <img id="title-page-image" src="$if(title-page.image.src)$$title-page.image.src$$else$$title-page.image$$endif$" alt="$if(title-page.image.alt)$$title-page.image.alt$$else$cover image$endif$">
+      $endif$
+    </div>
+  </div>
+  $if(title-page.footer)$
+  <div id="title-page-footer"><div>
+    $if(title-page.footer.left)$
+    <div id="title-page-footer-left">
+      $title-page.footer.left$
+    </div>
+    $endif$
+    $if(title-page.footer.middle)$
+    <div id="title-page-footer-middle">
+      $title-page.footer.middle$
+    </div>
+    $endif$
+    $if(title-page.footer.right)$
+    <div id="title-page-footer-right">
+      $title-page.footer.right$
+    </div></div>
+    $endif$
+  </div>
+  $endif$
+</div>
+
+<div class="front-matter-container">
+$if(imprint)$
+<div id="imprint">
+$if(imprint.heading)$<h2>$imprint.heading$</h2>$endif$
+<address>
+<div id="imprint-table">
+<div>
+  <div>$imprint.title-label$</div>
+  <div>$title$$if(subtitle)$ - $subtitle$$endif$</div>
+</div>
+$if(imprint.edition)$<div>
+  <div>$imprint.edition-label$</div>
+  <div>$imprint.edition$</div>
+</div>$endif$
+$if(date)$<div>
+  <div>$imprint.date-label$</div>
+  <div>$date$</div>
+</div>$endif$
+$if(imprint.place)$<div>
+  <div>$imprint.place-label$</div>
+  <div>$for(imprint.place)$$imprint.place$$sep$<br>$endfor$</div>
+</div>$endif$
+$if(imprint.publisher)$<div>
+  <div>$imprint.publisher-label$</div>
+  <div>$for(imprint.publisher)$$imprint.publisher$$sep$<br>$endfor$</div>
+</div>$endif$
+$if(author)$<div>
+  <div>$imprint.author-label$</div>
+  <div>
+    $for(author)$
+      $if(author.name)$
+        $author.name$$if(author.affiliation)$ ($author.affiliation$)$endif$
+      $else$
+        $author$
+      $endif$
+    $sep$<br>$endfor$
+  </div>
+</div>$endif$
+$if(imprint.editor)$<div>
+  <div>$imprint.editor-label$</div>
+  <div>
+    $for(imprint.editor)$
+      $if(imprint.editor.name)$
+        $imprint.editor.name$$if(imprint.editor.affiliation)$ ($imprint.editor.affiliation$)$endif$
+      $else$
+        $imprint.editor$
+      $endif$
+    $sep$<br>$endfor$
+  </div>
+</div>$endif$
+$if(imprint.address)$<div>
+  <div>$imprint.address-label$</div>
+  <div>$for(imprint.address)$$imprint.address$$sep$<br>$endfor$</div>
+</div>$endif$
+$if(imprint.phone)$<div>
+  <div>$imprint.phone-label$</div>
+  <div><a href="tel:$imprint.phone$" class="imprint-phone">$imprint.phone$</a></div>
+</div>$endif$
+$if(imprint.email)$<div>
+  <div>$imprint.email-label$</div>
+  <div><a href="mailto:$imprint.email$" class="imprint-email">$imprint.email$</a></div>
+</div>$endif$
+$if(imprint.url)$<div>
+  <div>$imprint.url-label$</div>
+  <div><a href="$imprint.url$" class="imprint-url"><span>$imprint.url$</span>$if(imprint.url-qrcode)$<img id="imprint-url-qrcode" src="$if(imprint.url-qrcode.src)$$imprint.url-qrcode.src$$else$$imprint.url-qrcode$$endif$" alt="$if(imprint.url-qrcode.alt)$$imprint.url-qrcode.alt$$else$qr-code for url$endif$">$endif$</a></div>
+</div>$endif$
+$if(imprint.copyright)$<div>
+  <div>$imprint.copyright-label$</div>
+  <div>
+    $for(imprint.copyright)$$imprint.copyright$$sep$<br>$endfor$
+  </div>
+</div>$endif$
+</div>
+</address>
+$if(imprint.remark)$
+<div id="imprint-remarks-container">
+  $for(imprint.remark)$
+  <p>$imprint.remark$</p>
+  $endfor$
+</div>
+$endif$
+</div>
+$endif$
+
+$if(toc)$
+<div id="$idprefix$TOC" class="toc level1 front-matter">
+$if(toc-title)$
+<h1 class="toc-title">$toc-title$</h1>
+$endif$
+$table-of-contents$
+</div>
+$endif$
+</div>
+
+<div class="main">
+$body$
+</div>
+
+$for(include-after)$
+$include-after$
+$endfor$
+
+<script>
+// when the page is about to reload via servr, remember the scroll position
+document.addEventListener('servr:reload', function(e) {
+  sessionStorage.setItem('pagedown-scroll', window.scrollY);
+});
+</script>
+</body>
+</html>
